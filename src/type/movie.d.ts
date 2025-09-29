@@ -7,6 +7,8 @@ interface IListMovie {
     quality: string;
     sub_docquyen: boolean;
     episode_current: string;
+    year: number;
+    episode_total: number;
 }
 interface IPhim {
     _id: string;
