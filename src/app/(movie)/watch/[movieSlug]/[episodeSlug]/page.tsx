@@ -5,7 +5,7 @@ import useSWR from "swr";
 
 const WatchPage = () => {
     const { episodeSlug, movieSlug } = useParams<{ episodeSlug: string; movieSlug: string }>();
-    const codePhim = (parseInt(episodeSlug) - 1);
+    const codePhim = (parseInt(episodeSlug === 'Full' || episodeSlug === 'full' ? '1' : episodeSlug) - 1);
     const fetcher = (url: string) => fetch(url).then(res => res.json())
     const { data, error, isLoading } = useSWR(movieSlug ? `${process.env.NEXT_PUBLIC_API_MOVIE_URL}/v1/api/phim/${movieSlug}` : null, fetcher,
         {
