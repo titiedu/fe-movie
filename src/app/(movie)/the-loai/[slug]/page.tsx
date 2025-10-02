@@ -1,46 +1,54 @@
 'use client'
+import { useParams, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { HashLoader } from 'react-spinners'
 import useSWR from 'swr'
 import { IoLogoBuffer } from "react-icons/io";
+import MoviePagination from '@/components/movie/movie-pagination'
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
-import MoviePagination from './movie-pagination'
 
-const ListMovie = () => {
-     const searchParams = useSearchParams()
-        const trang = searchParams.get('trang') || '1' // Default to page 1
-        const [page, setPage] = useState<number | null>(null)
-        const [limit, setLimit] = useState<number | null>(null)
-       const [totalItems, setTotalItems] = useState<number | null>(null)
+const TheLoaiPage = () => {
+    const {slug} = useParams()
+    const searchParams = useSearchParams()
+    const trang = searchParams.get('trang') || '1' // Default to page 1
+    const [page, setPage] = useState<number | null>(null)
+    const [limit, setLimit] = useState<number | null>(null)
+    const [totalItems, setTotalItems] = useState<number | null>(null)
     const fetcher = (url: string) => fetch(url).then(res => res.json())
-    const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_MOVIE_URL}/v1/api/danh-sach/phim-moi?page=${trang}`, fetcher,
+    const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_MOVIE_URL}/v1/api/the-loai/${slug}/?page=${trang}`, fetcher,
         {
             revalidateIfStale: false,
             revalidateOnFocus: false,
             revalidateOnReconnect: false
         }
     )
-    const dataMovies: any[] = data?.data?.items || []
+    const dataMovies: IListMovie[] = data?.data?.items || []
      useEffect(() => {
-            if (data?.status ==="success") {
-                setPage(data.data.params.pagination.currentPage)
-                setTotalItems(data.data.params.pagination.totalItems)
-                setLimit(data.data.params.pagination.totalItemsPerPage)
-            }
-        }, [data])
+        if (data?.status ==="success") {
+            setPage(data.data.params.pagination.currentPage)
+            setTotalItems(data.data.params.pagination.totalItems)
+            setLimit(data.data.params.pagination.totalItemsPerPage)
+        }
+    }, [data])
     if (error) return <div>failed to load</div>
- if (isLoading) return (
+    if (isLoading) return (
         <div className="flex justify-center items-center min-h-[400px]">
             <HashLoader color="#3B82F6" />
         </div>
     )
-      const totalPages = totalItems && limit ? Math.ceil(totalItems / limit) : 0;
+    const totalPages = totalItems && limit ? Math.ceil(totalItems / limit) : 0;
     return (
         <div className='container px-4 mx-auto'>
             <div className='w-full flex justify-between items-center bg-gray-800 p-1 text-white border-radius-2xl mt-4 mb-2'>
-                <h2 className='w-full text-xl font-bold m-4'>MỚI CẬP NHẬT</h2>
+                <h2 className='w-full text-xl font-bold m-4'>
+                    PHIM PHÁT HÀNH NĂM {slug?.toString().toUpperCase()}
+                    {totalItems && (
+                        <span className='text-sm font-normal text-gray-300 ml-2'>
+                            ({totalItems} kết quả)
+                        </span>
+                    )}
+                </h2>
                 <div className='w-full text-right mr-4'>
                     <Link href="/home" className='text-blue-500 hover:underline'>Xem tất cả</Link>
                 </div>
@@ -68,14 +76,15 @@ const ListMovie = () => {
                     <span className='text-white text-sm font-semibold mt-2'>Xem thêm</span>
                 </Link>
             </div>
-             {/* Pagination Component */}
+            
+            {/* Pagination Component */}
             {page && totalItems && limit && (
                 <MoviePagination
                     currentPage={page}
                     totalPages={totalPages}
                     totalItems={totalItems}
                     itemsPerPage={limit}
-                    baseUrl={`/`}
+                    baseUrl={`/the-loai/${slug}`}
                     className="mt-8 mb-4"
                 />
             )}
@@ -83,4 +92,5 @@ const ListMovie = () => {
     )
 }
 
-export default ListMovie
+
+export default TheLoaiPage
