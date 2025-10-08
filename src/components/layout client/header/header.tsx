@@ -1,4 +1,4 @@
-
+'use client'
 import Link from 'next/link'
 import movieLogo from '../../../../public/movie.png'
 import Image from 'next/image'
