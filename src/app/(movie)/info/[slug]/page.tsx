@@ -43,7 +43,7 @@ const InfoPage = () => {
                         </div>
                     </div>
                     <div className='info w-12/12 sm:basis-3/4 sm:pl-4 mt-4 sm:mt-0 relative'>
-                        <h1 className='text-2xl font-bold'>{phim?.name || 'Unknown'}</h1>
+                        <h1 className='text-2xl font-bold'>{data?.data?.seoOnPage?.seoSchema?.name || 'Unknown'}</h1>
                         <ScrollArea className="h-48 mt-2 pr-3 text-justify border-t pt-2 ">
                             {phim?.content ? (
                                 <div dangerouslySetInnerHTML={{ __html: phim.content }} />
